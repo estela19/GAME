@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include<time.h>
 
-// ÇÁ·Î±×·¥ ÀüÃ¼¿¡¼­ »ç¿ëÇÒ °¢Á¾ ÀÌ¸§µéÀ» ¼±¾ğÇØ µÑ ¸¸ÇÑ ºÎºĞ
+// í”„ë¡œê·¸ë¨ ì „ì²´ì—ì„œ ì‚¬ìš©í•  ê°ì¢… ì´ë¦„ë“¤ì„ ì„ ì–¸í•´ ë‘˜ ë§Œí•œ ë¶€ë¶„
 void score(void);
 void print_me(int a, int b, const char* c);
 void print_block(int x, int n);
@@ -41,7 +41,7 @@ int breakpoint_ = 0;
 int main()
 {
 
-	// ¶óÀÌºê·¯¸®¸¦ »ç¿ëÇÏ±â À§ÇØ ¹Ì¸® Àû¾î µĞ ºÎºĞ(Ã¢ ¼¼ÆÃÇÏ±â + ½ºÅé¿öÄ¡ ÄÑ±â)
+	// ë¼ì´ë¸ŒëŸ¬ë¦¬ë¥¼ ì‚¬ìš©í•˜ê¸° ìœ„í•´ ë¯¸ë¦¬ ì ì–´ ë‘” ë¶€ë¶„(ì°½ ì„¸íŒ…í•˜ê¸° + ìŠ¤í†±ì›Œì¹˜ ì¼œê¸°)
 	Start_Console();
 	Stopwatch_Start();
 
@@ -56,10 +56,10 @@ int main()
 		j++;
 	}
 	
-	// 'Å« while¹®'
+	// 'í° whileë¬¸'
 	while ( 1 )
 	{
-		// »ç¿ëÀÚ ÀÔ·ÂÀ» Ã³¸®ÇÏ´Â ºÎºĞ
+		// ì‚¬ìš©ì ì…ë ¥ì„ ì²˜ë¦¬í•˜ëŠ” ë¶€ë¶„
 		Accept_Inputs();
 
 		time_now = Stopwatch_Get();
@@ -73,12 +73,12 @@ int main()
 
 			if ( info.type & TypeCode_Key )
 			{
-				//sace Å°¸¦ ´­·¶À»¶§
+				//sace í‚¤ë¥¼ ëˆŒë €ì„ë•Œ
 				if (info.type == TypeCode_Key_Press && info.code == 0x20 && time_push_me_jump==-1) {
 					time_push_me_jump = time_now;
 				}
 
-				//¾Æ·¡Å°¸¦ ´­·¶À»¶§
+				//ì•„ë˜í‚¤ë¥¼ ëˆŒë €ì„ë•Œ
 				if (info.type == TypeCode_Key_Press && info.code == 0x28 && time_push_me_slide==-1) {
 					time_push_me_slide = time_now;
 				}
@@ -89,28 +89,28 @@ int main()
 
 				pos = Get_Mouse_Pos();
 
-				// ¸¶¿ì½º ÀÔ·ÂÀ» Ã³¸®ÇÏ´Â ºÎºĞ
+				// ë§ˆìš°ìŠ¤ ì…ë ¥ì„ ì²˜ë¦¬í•˜ëŠ” ë¶€ë¶„
 			}
 		}
 
 		score();
 
-		//»óÅÂ¿¡ µû¸¥ ÇÃ·¹ÀÌ¾î Ãâ·Â
+		//ìƒíƒœì— ë”°ë¥¸ í”Œë ˆì´ì–´ ì¶œë ¥
 		print_me_run();
 		print_me_slide();
 		if (time_push_me_slide == -1 && time_push_me_jump == -1)
 			print_me(pos_me_x, pos_me_y, me_run);
 
-		//Àå¾Ö¹° »ı¼º
+		//ì¥ì• ë¬¼ ìƒì„±
 		move_block(0);
 		if (time_now - time_start >= interval_update_obstacle * 20) move_block(1);
 		if (time_now - time_start >= interval_update_obstacle * 40) move_block(2);
 		
-		//Àå¾Ö¹°¿¡ ºÎµúÇûÀ»¶§
+		//ì¥ì• ë¬¼ì— ë¶€ë”ªí˜”ì„ë•Œ
 		breakpoint_ = fail();
 		if (breakpoint_ == 1) break;
 
-		// Àá½Ã ½¬´Â ºÎºĞ
+		// ì ì‹œ ì‰¬ëŠ” ë¶€ë¶„
 		Stopwatch_SpinLock(1.0 / 240);
 	}
 
