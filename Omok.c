@@ -37,7 +37,8 @@ int main() {
 			tmp = undo(1, turn);
 			system("cls");
 			print_board();
-		} while (!strcmp(tmp, "yes"));
+		} while (!strcmp(tmp, "yes") && !check_thr(1, turn));
+
 
 		if (check(1, turn)) {
 			printf("congraturation!!\n"
@@ -66,7 +67,46 @@ int main() {
 }
 
 int check_thr(int player_num, int turn) {
+	const int add_y[8] = { 1, 1, 1, 0, -1, -1, -1, 0 };
+	const int add_x[8] = { 1, 0, -1 , -1, -1, 0, 1, 1 };
+	int pos_x = player[player_num][turn].x;
+	int pos_y = player[player_num][turn].y;
+	int new_x = pos_x;
+	int new_y = pos_y;
+	int cnt[8] = { 0 };
+	int thr_cnt = 0;
+	int result = 0;
+	save_score[player_num][pos_x][pos_y] = 1;
 
+	for (i = 0; i < 4; i++) {
+		new_x = pos_x + add_x[i];
+		new_y = pos_y + add_y[i];
+
+		while (save_score[player_num][new_x][new_y] == 1) {
+			new_x += add_x[i];
+			new_y += add_y[i];
+			cnt[i]++;
+		}
+
+
+		new_x = pos_x + add_x[i + 4];
+		new_y = pos_y + add_y[i + 4];
+
+		while (save_score[player_num][new_x][new_y] == 1) {
+			new_x += add_x[i + 4];
+			new_y += add_y[i + 4];
+			cnt[i + 4]++;
+		}
+	}
+
+	for (j = 0; j < 8; j++) {
+		if (cnt[j] == 2 && cnt[j + 4] == 2) return 0;
+		else if (cnt[j] == 2) thr_cnt++;
+	}
+
+	if (thr_cnt > 1) result = 1;
+
+	return result;
 }
 
 int check(int player_num, int turn) {
@@ -140,8 +180,11 @@ void player_turn_input(int player_num, int turn) {
 	printf("  Where is your next choice? : ");
 	scanf(" %d %d", &player[player_num][turn].x, &player[player_num][turn].y);
 
-	while (board[player[player_num][turn].x][player[player_num][turn].y] != '.' || player[player_num][turn].x > 20 || player[player_num][turn].y > 20) {
-		printf("You can't choice here! ");
+	while (board[player[player_num][turn].x][player[player_num][turn].y] != '.' || player[player_num][turn].x > 20 || player[player_num][turn].y > 20 || check_thr(player_num, turn)) {
+		printf("You can't choice here! \n");
+		if (check_thr(player_num, turn)) {
+			printf("<There is thr-thr spot>\n");
+		}
 		printf("You should coice another coord : ");
 		scanf(" %d %d", &player[player_num][turn].x, &player[player_num][turn].y);
 	}
