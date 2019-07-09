@@ -15,9 +15,11 @@ typedef struct t_block {
 }block;
 
 void print_board(void);
-block* make_new_tetrimino(int**** tetri_set, block* p_tetrimino);
+void print_blank(int x, int y);
+void rotate_tetrimino(block* p_tetrimino);
+void make_new_tetrimino(block* p_tetrimino);
 void print_tetrimino(block* p_tetrimino);
-// 프로그램 전체에서 사용할 각종 이름들을 선언해 둘 만한 부분
+
 
 /*
 0x20 스페이스
@@ -196,26 +198,31 @@ const int tetriminos[7][4][5][5] =
 			{	0,	0,	0,	1,	0,	},
 			{	0,	0,	0,	0,	0,	}	}	} };
 
+const char blank = {' '};
+
 int main()
 {
 	block tetrimino;
-	block* p_tetrimino;
+	block* p_tetrimino = &tetrimino;
 	int board[20][30];
-	int time_interval_update = 0.5;
-	int time_start;
+	float time_interval_update = 0.6;
+	float time_start;
+	float time_now;
 	
 	
 	Start_Console();
 	Stopwatch_Start();
 	time_start = Stopwatch_Get();
+	time_now = Stopwatch_Get();
 
 	print_board();
-	make_new_tetrimino(&tetriminos, &p_tetrimino);
-	print_tetrimino(&p_tetrimino);
+	make_new_tetrimino(p_tetrimino);
+	print_tetrimino(p_tetrimino);
+
 
 	while ( 1 )
 	{
-		// 사용자 입력을 처리하는 부분
+		
 		Accept_Inputs();
 		
 		while ( Can_Read() )
@@ -226,10 +233,20 @@ int main()
 
 			if ( info.type & TypeCode_Key )
 			{
-
-				if (info.type == TypeCode_Key_Press && info.code == 0x25);
-						
-						
+				//위쪽키
+				if (info.type == TypeCode_Key_Press && info.code == 0x26) {
+					rotate_tetrimino(p_tetrimino);
+				}
+				
+				//왼쪽키
+				if (info.type == TypeCode_Key_Press && info.code == 0x25) {
+					p_tetrimino->pos.x -= 1;
+				}
+				
+				//오른쪽키
+				if (info.type == TypeCode_Key_Press && info.code == 0x27) {
+					p_tetrimino->pos.x += 1;
+				}
 			}
 			else
 			{
@@ -240,10 +257,14 @@ int main()
 			}
 		}
 
-
-
 		
-
+		if (Stopwatch_Get() - time_now > time_interval_update) {
+			print_blank(tetrimino.pos.x, tetrimino.pos.y);
+			p_tetrimino->pos.y += 1;
+			time_now = Stopwatch_Get();
+			print_tetrimino(p_tetrimino);
+		}
+		
 
 
 
@@ -254,15 +275,16 @@ int main()
 	return 0;
 }
 
-block* make_new_tetrimino(int**** tetri_set, block* p_tetrimino) {
+//이동완료된 tetrimino의 정보를 갱신하는 함수
+void make_new_tetrimino(block* p_tetrimino) {
 	int t_type = rand() % 7;
 	p_tetrimino->type = t_type;
 	p_tetrimino->rotate = 0;
 	p_tetrimino->pos.x = 15;
 	p_tetrimino->pos.y = 1;
-	return p_tetrimino;
 }
 
+//tetrimino를 출력하는 함수
 void print_tetrimino(block* p_tetrimino) {
 	int i, j;
 	int x = p_tetrimino->pos.x;
@@ -280,7 +302,14 @@ void print_tetrimino(block* p_tetrimino) {
 	}
 }
 
+//tetrimino를 시계방향으로 90도 회전하는 함수
+void rotate_tetrimino(block* p_tetrimino) {
+	int temp = p_tetrimino->rotate;
+	temp = (temp + 1) % 4;
+	p_tetrimino->rotate = temp;
+}
 
+//기본적인 게임판을 만드는 함수
 void print_board(void) {
 	int i;
 	for (i = 0; i < 30; i++) {
@@ -293,5 +322,17 @@ void print_board(void) {
 	for (i = 0; i < 30; i++) {
 		Move_Cursor(42, i);
 		printf("|");
+	}
+}
+
+//저번 tetrimino의 출력을 지우기 위해 공백을 출력하는 함수
+void print_blank(int x, int y) {
+	int i, j;
+	Move_Cursor(x, y);
+	for (i = -5; i < 10; i++) {
+		for (j = -5; j < 10; j++) {
+			Move_Cursor(x + i, y + j);
+			printf("%c", blank);
+		}
 	}
 }
