@@ -198,18 +198,18 @@ const int tetriminos[7][4][5][5] =
 			{	0,	0,	0,	1,	0,	},
 			{	0,	0,	0,	0,	0,	}	}	} };
 
-const char blank = {' '};
+const char blank = { ' ' };
 
 int main()
 {
 	block tetrimino;
 	block* p_tetrimino = &tetrimino;
 	int board[20][30];
-	float time_interval_update = 0.6;
-	float time_start;
-	float time_now;
-	
-	
+	double time_interval_update = 0.6;
+	double time_start;
+	double time_now;
+
+
 	Start_Console();
 	Stopwatch_Start();
 	time_start = Stopwatch_Get();
@@ -220,29 +220,29 @@ int main()
 	print_tetrimino(p_tetrimino);
 
 
-	while ( 1 )
+	while (1)
 	{
-		
+
 		Accept_Inputs();
-		
-		while ( Can_Read() )
+
+		while (Can_Read())
 		{
 			struct Info_Input info;
 
 			Read_Input(&info);
 
-			if ( info.type & TypeCode_Key )
+			if (info.type & TypeCode_Key)
 			{
 				//위쪽키
 				if (info.type == TypeCode_Key_Press && info.code == 0x26) {
 					rotate_tetrimino(p_tetrimino);
 				}
-				
+
 				//왼쪽키
 				if (info.type == TypeCode_Key_Press && info.code == 0x25) {
 					p_tetrimino->pos.x -= 1;
 				}
-				
+
 				//오른쪽키
 				if (info.type == TypeCode_Key_Press && info.code == 0x27) {
 					p_tetrimino->pos.x += 1;
@@ -257,26 +257,28 @@ int main()
 			}
 		}
 
-		
+
 		if (Stopwatch_Get() - time_now > time_interval_update) {
 			print_blank(tetrimino.pos.x, tetrimino.pos.y);
 			p_tetrimino->pos.y += 1;
 			time_now = Stopwatch_Get();
 			print_tetrimino(p_tetrimino);
 		}
-		
 
-
-
-		
+		//블록 및 게임판 재출력
+		print_blank(tetrimino.pos.x, tetrimino.pos.y);
+		print_tetrimino(p_tetrimino);
+		Move_Cursor(0, 0);
+		print_board();
 		Stopwatch_SpinLock(1.0 / 240);
+
 	}
 
 	return 0;
 }
 
 //이동완료된 tetrimino의 정보를 갱신하는 함수
-void make_new_tetrimino(block* p_tetrimino) {
+void make_new_tetrimino(block * p_tetrimino) {
 	int t_type = rand() % 7;
 	p_tetrimino->type = t_type;
 	p_tetrimino->rotate = 0;
@@ -285,7 +287,7 @@ void make_new_tetrimino(block* p_tetrimino) {
 }
 
 //tetrimino를 출력하는 함수
-void print_tetrimino(block* p_tetrimino) {
+void print_tetrimino(block * p_tetrimino) {
 	int i, j;
 	int x = p_tetrimino->pos.x;
 	int y = p_tetrimino->pos.y;
@@ -303,7 +305,7 @@ void print_tetrimino(block* p_tetrimino) {
 }
 
 //tetrimino를 시계방향으로 90도 회전하는 함수
-void rotate_tetrimino(block* p_tetrimino) {
+void rotate_tetrimino(block * p_tetrimino) {
 	int temp = p_tetrimino->rotate;
 	temp = (temp + 1) % 4;
 	p_tetrimino->rotate = temp;
